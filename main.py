@@ -1,10 +1,9 @@
-import logging
 import os
 
 from fastapi import FastAPI
 from fastapi_mqtt import FastMQTT, MQTTConfig
 import uvicorn
-
+from apscheduler.schedulers.background import BackgroundScheduler
 from log_config import get_logger
 
 logger = get_logger()
@@ -33,6 +32,18 @@ mqtt = FastMQTT(
 app = FastAPI()
 mqtt.init_app(app)
 
+
+def tick():
+    logger.info("tick")
+    mqtt.publish(MQTT_TOPIC, 'tick')
+
+
+@app.on_event('startup')
+def init_data():
+    logger.info("Starting the scheduler")
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(tick, 'interval', seconds=10)
+    scheduler.start()
 
 @mqtt.on_connect()
 def connect(client, flags, rc, properties):

@@ -1,3 +1,4 @@
 fastapi~=0.89.1
 uvicorn
 fastapi-mqtt~=1.0.6
+APScheduler
