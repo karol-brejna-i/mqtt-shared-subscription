@@ -22,7 +22,8 @@ logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 # MQTT config
 mqtt_config = MQTTConfig(
     host=MQTT_HOST,
-    port=MQTT_PORT
+    port=MQTT_PORT,
+    ssl=False
 )
 
 mqtt = FastMQTT(
