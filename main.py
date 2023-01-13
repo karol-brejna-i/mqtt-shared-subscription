@@ -1,10 +1,11 @@
 import os
 
 from fastapi import FastAPI
-from fastapi_mqtt import FastMQTT, MQTTConfig
 import uvicorn
 from apscheduler.schedulers.background import BackgroundScheduler
 from log_config import get_logger
+
+import paho.mqtt.client as mqtt
 
 logger = get_logger()
 
@@ -19,23 +20,17 @@ SUBSCRIBE_TOPIC = f"$share/{MQTT_GROUP}/{MQTT_TOPIC}"
 logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
 logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 
-# MQTT config
-mqtt_config = MQTTConfig(
-    host=MQTT_HOST,
-    port=MQTT_PORT,
-    ssl=False
-)
-
-mqtt = FastMQTT(
-    config=mqtt_config
-)
+mqtt_client = mqtt.Client(client_id="", protocol=mqtt.MQTTv5)
+mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
+mqtt_client.loop_start()
 
 app = FastAPI()
-mqtt.init_app(app)
 
 
 def tick():
     logger.info("tick")
+
+
 #     mqtt.publish(MQTT_TOPIC, 'tick')
 
 
