@@ -3,6 +3,8 @@ import os
 from fastapi import FastAPI
 import uvicorn
 from apscheduler.schedulers.background import BackgroundScheduler
+from paho.mqtt.subscribeoptions import SubscribeOptions
+
 from log_config import get_logger
 
 import paho.mqtt.client as mqtt
@@ -33,6 +35,7 @@ def on_disconnect(client, userdata, flags, rc=0):
 
 
 def on_message(client, userdata, msg):
+    logger.info("on_message")
     logger.info(msg.topic + " " + str(msg.payload))
 
 
@@ -40,8 +43,10 @@ mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
 logger.info(f"mqtt_client {mqtt_client}")
 mqtt_client.on_disconnect = on_disconnect
 mqtt_client.on_connect = on_connect
-mqtt_client._on_message = on_message
+mqtt_client.on_message = on_message
 
+sub_result = mqtt_client.subscribe(MQTT_TOPIC, options=SubscribeOptions(qos=1))
+logger.info("sub_result: " + str(sub_result))
 
 logger.info("before loop start")
 mqtt_client.loop_start()
@@ -76,40 +81,19 @@ async def init_data():
     scheduler.add_job(tick, 'interval', seconds=10)
     scheduler.start()
 
-
-# @mqtt.on_connect()
-# def connect(client, flags, rc, properties):
-#     logger.info("Connected to MQTT Broker!")
-#     mqtt.client.subscribe(SUBSCRIBE_TOPIC)  # subscribing mqtt topic
-#     logger.info(f"Connected: {client}, {flags}, {rc}, {properties}")
-
-
-# @mqtt.on_message()
-# async def message(client, topic, payload, qos, properties):
-#     logger.info(f"Received message ({os.getpid()}): {topic}, {payload.decode()}, {qos}, {properties}")
-
-
-# @mqtt.subscribe("dupa")
-# async def message_to_topic(client, topic, payload, qos, properties):
-#     logger.info("Received message to specific topic: ", topic, payload.decode(), qos, properties)
-
-
-# @mqtt.on_subscribe()
-# def subscribe(client, mid, qos, properties):
-#     logger.info(f"subscribed {client}, {mid}, {qos}, {properties}")
-
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
-# @app.get("/publish")
-# async def func(message: str = "Test message."):
-#     logger.info(f"Publishing message ({os.getpid()}): {message}")
-#     mqtt.publish(MQTT_TOPIC, message)
-
-#     return {"result": True, "message": "Published"}
+@app.get("/publish")
+async def func(message: str = "Test message."):
+    logger.info(f"Publishing message ({os.getpid()}): {message}")
+    logger.debug(f"mqtt_client {mqtt_client}")
+    logger.debug(f"mqtt_client {mqtt_client.is_connected()}")
+    result = mqtt_client.publish(MQTT_TOPIC, "tick", qos=1)
+    logger.info(f"publish result: {result}")
+    return {"result": True, "message": "Published"}
 
 
 if __name__ == "__main__":
