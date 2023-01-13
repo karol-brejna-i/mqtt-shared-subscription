@@ -20,8 +20,26 @@ SUBSCRIBE_TOPIC = f"$share/{MQTT_GROUP}/{MQTT_TOPIC}"
 logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
 logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 
+
+def on_connect(self):
+    logger.info("on_connect")
+    # mqtt_client.subscribe(SUBSCRIBE_TOPIC)
+
+
+def on_disconnect(client, userdata, rc=0):
+    logger.debug("DisConnected result code " + str(rc))
+    client.loop_stop()
+
+
+def on_message(client, userdata, msg):
+    print(msg.topic + " " + str(msg.payload))
+
+
 mqtt_client = mqtt.Client(client_id="", protocol=mqtt.MQTTv5)
+mqtt_client.on_disconnect = on_disconnect
+mqtt_client.on_connect = on_connect
 mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
+# mqtt_client.connect_async()
 mqtt_client.loop_start()
 
 app = FastAPI()
@@ -31,6 +49,8 @@ def tick():
     logger.info("tick")
     # mqtt_client
     mqtt_client.publish(MQTT_TOPIC, "tick")
+
+
 #     mqtt.publish(MQTT_TOPIC, 'tick')
 
 
@@ -57,11 +77,6 @@ async def init_data():
 # @mqtt.subscribe("dupa")
 # async def message_to_topic(client, topic, payload, qos, properties):
 #     logger.info("Received message to specific topic: ", topic, payload.decode(), qos, properties)
-
-
-# @mqtt.on_disconnect()
-# def disconnect(client, packet, exc=None):
-#     logger.info("Disconnected")
 
 
 # @mqtt.on_subscribe()
