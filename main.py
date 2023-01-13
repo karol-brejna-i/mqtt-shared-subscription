@@ -2,10 +2,16 @@ import os
 
 from fastapi import FastAPI
 from fastapi_mqtt import FastMQTT, MQTTConfig
+import uvicorn
 
 app = FastAPI()
 
-mqtt_config = MQTTConfig()
+# MQTT config
+mqtt_config = MQTTConfig(
+    host=os.getenv("MQTT_BROKER", "localhost"),
+    port=int(os.getenv("MQTT_PORT", 1883))
+)
+
 
 mqtt = FastMQTT(
     config=mqtt_config
@@ -50,3 +56,9 @@ async def func(message: str = "Test message."):
     mqtt.publish("test", message)  # publishing mqtt topic
 
     return {"result": True, "message": "Published"}
+
+
+if __name__ == "__main__":
+    # read port number from environment variable
+    port = int(os.getenv("PORT", 8080))
+    uvicorn.run(app, host='0.0.0.0', port=port)
