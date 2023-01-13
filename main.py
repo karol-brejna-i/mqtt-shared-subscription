@@ -29,9 +29,10 @@ def on_connect(client, userdata, flags, rc, costam):
     # mqtt_client.subscribe(SUBSCRIBE_TOPIC)
 
 
-def on_disconnect(client, userdata, flags, rc=0):
-    logger.debug("DisConnected result code " + str(rc))
-    client.loop_stop()
+def on_disconnect(client, userdata, flags, rc):
+    logger.debug("DisConnected result code {client}, {userdata}, {flags}, {rc}")
+    mqtt_client.loop_stop()
+    mqtt_client.loop_start()
 
 
 def on_message(client, userdata, msg):
