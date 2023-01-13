@@ -41,13 +41,16 @@ logger.info(f"mqtt_client {mqtt_client}")
 mqtt_client.on_disconnect = on_disconnect
 mqtt_client.on_connect = on_connect
 mqtt_client._on_message = on_message
-connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
-logger.info(f"connect_result: {connect_result}")
-# mqtt_client.connect_async()
+
 
 logger.info("before loop start")
 mqtt_client.loop_start()
 logger.info("after loop start")
+
+connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
+logger.info(f"connect_result: {connect_result}")
+# mqtt_client.connect_async()
+jg
 app = FastAPI()
 
 
