@@ -5,12 +5,9 @@ from fastapi import FastAPI
 from fastapi_mqtt import FastMQTT, MQTTConfig
 import uvicorn
 
-from log_config import init_loggers
+from log_config import get_logger
 
-init_loggers()
-logger = logging.getLogger("simple")
-
-app = FastAPI()
+logger = get_logger()
 
 MQTT_HOST = os.getenv("MQTT_HOST", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
@@ -23,11 +20,11 @@ mqtt_config = MQTTConfig(
     port=MQTT_PORT
 )
 
-
 mqtt = FastMQTT(
     config=mqtt_config
 )
 
+app = FastAPI()
 mqtt.init_app(app)
 
 
@@ -71,6 +68,6 @@ async def func(message: str = "Test message."):
 
 
 if __name__ == "__main__":
-    # read port number from environment variable
+    logger.info("Starting server from main.py")
     port = int(os.getenv("PORT", 8080))
     uvicorn.run(app, host='0.0.0.0', port=port)
