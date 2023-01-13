@@ -1,2 +1,10 @@
 #!/bin/bash
-uvicorn main:app --host 0.0.0.0 --port 8080 --workers 1 --proxy-headers
+echo "Starting the application ..."
+USE_PROXY_HEADER=${USE_PROXY_HEADER:-false}
+if [ "$USE_PROXY_HEADER" = "true" ]; then
+    echo "Using proxy headers"
+    uvicorn main:app --host 0.0.0.0 --port 8080 --workers 1 --proxy-headers
+else
+    echo "Not using proxy headers"
+    uvicorn main:app --host 0.0.0.0 --port 8080 --workers 1
+fi
