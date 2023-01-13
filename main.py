@@ -21,12 +21,13 @@ logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
 logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 
 
-def on_connect(self):
+def on_connect(client, userdata, flags, rc, costam):
     logger.info("on_connect")
+    logger.info("Connected with {client}, {userdata}, {flags}, {rc}, {costam}")
     # mqtt_client.subscribe(SUBSCRIBE_TOPIC)
 
 
-def on_disconnect(client, userdata, rc=0):
+def on_disconnect(client, userdata, flags, rc=0):
     logger.debug("DisConnected result code " + str(rc))
     client.loop_stop()
 
