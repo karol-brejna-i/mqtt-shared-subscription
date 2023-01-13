@@ -50,7 +50,7 @@ logger.info("after loop start")
 connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
 logger.info(f"connect_result: {connect_result}")
 # mqtt_client.connect_async()
-jg
+
 app = FastAPI()
 
 
