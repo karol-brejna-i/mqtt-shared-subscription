@@ -19,23 +19,23 @@ SUBSCRIBE_TOPIC = f"$share/{MQTT_GROUP}/{MQTT_TOPIC}"
 logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
 logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 
-# MQTT config
-mqtt_config = MQTTConfig(
-    host=MQTT_HOST,
-    port=MQTT_PORT
-)
+# # MQTT config
+# mqtt_config = MQTTConfig(
+#     host=MQTT_HOST,
+#     port=MQTT_PORT
+# )
 
-mqtt = FastMQTT(
-    config=mqtt_config
-)
+# mqtt = FastMQTT(
+#     config=mqtt_config
+# )
 
 app = FastAPI()
-mqtt.init_app(app)
+# mqtt.init_app(app)
 
 
 def tick():
     logger.info("tick")
-    mqtt.publish(MQTT_TOPIC, 'tick')
+#     mqtt.publish(MQTT_TOPIC, 'tick')
 
 
 @app.on_event('startup')
@@ -46,31 +46,31 @@ async def init_data():
     scheduler.start()
 
 
-@mqtt.on_connect()
-def connect(client, flags, rc, properties):
-    logger.info("Connected to MQTT Broker!")
-    mqtt.client.subscribe(SUBSCRIBE_TOPIC)  # subscribing mqtt topic
-    logger.info(f"Connected: {client}, {flags}, {rc}, {properties}")
+# @mqtt.on_connect()
+# def connect(client, flags, rc, properties):
+#     logger.info("Connected to MQTT Broker!")
+#     mqtt.client.subscribe(SUBSCRIBE_TOPIC)  # subscribing mqtt topic
+#     logger.info(f"Connected: {client}, {flags}, {rc}, {properties}")
 
 
-@mqtt.on_message()
-async def message(client, topic, payload, qos, properties):
-    logger.info(f"Received message ({os.getpid()}): {topic}, {payload.decode()}, {qos}, {properties}")
+# @mqtt.on_message()
+# async def message(client, topic, payload, qos, properties):
+#     logger.info(f"Received message ({os.getpid()}): {topic}, {payload.decode()}, {qos}, {properties}")
 
 
-@mqtt.subscribe("dupa")
-async def message_to_topic(client, topic, payload, qos, properties):
-    logger.info("Received message to specific topic: ", topic, payload.decode(), qos, properties)
+# @mqtt.subscribe("dupa")
+# async def message_to_topic(client, topic, payload, qos, properties):
+#     logger.info("Received message to specific topic: ", topic, payload.decode(), qos, properties)
 
 
-@mqtt.on_disconnect()
-def disconnect(client, packet, exc=None):
-    logger.info("Disconnected")
+# @mqtt.on_disconnect()
+# def disconnect(client, packet, exc=None):
+#     logger.info("Disconnected")
 
 
-@mqtt.on_subscribe()
-def subscribe(client, mid, qos, properties):
-    logger.info(f"subscribed {client}, {mid}, {qos}, {properties}")
+# @mqtt.on_subscribe()
+# def subscribe(client, mid, qos, properties):
+#     logger.info(f"subscribed {client}, {mid}, {qos}, {properties}")
 
 
 @app.get("/")
@@ -78,12 +78,12 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/publish")
-async def func(message: str = "Test message."):
-    logger.info(f"Publishing message ({os.getpid()}): {message}")
-    mqtt.publish(MQTT_TOPIC, message)
+# @app.get("/publish")
+# async def func(message: str = "Test message."):
+#     logger.info(f"Publishing message ({os.getpid()}): {message}")
+#     mqtt.publish(MQTT_TOPIC, message)
 
-    return {"result": True, "message": "Published"}
+#     return {"result": True, "message": "Published"}
 
 
 if __name__ == "__main__":
