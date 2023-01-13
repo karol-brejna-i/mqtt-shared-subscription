@@ -36,20 +36,27 @@ def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
 
 
-mqtt_client = mqtt.Client(client_id="", protocol=mqtt.MQTTv5)
+mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
 mqtt_client.on_disconnect = on_disconnect
 mqtt_client.on_connect = on_connect
+mqtt_client._on_message = on_message
 mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
 # mqtt_client.connect_async()
-mqtt_client.loop_start()
 
+logger.info("before loop start")
+mqtt_client.loop_start()
+logger.info("after loop start")
 app = FastAPI()
 
 
 def tick():
     logger.info("tick")
     # mqtt_client
-    mqtt_client.publish(MQTT_TOPIC, "tick")
+    result = mqtt_client.publish(MQTT_TOPIC, "tick", qos=1)
+    logger.info(f"publish result: {result}")
+    # mqtt_client.single(topic, payload=None, qos=0, retain=False, hostname="localhost",
+    #        port=1883, client_id="", keepalive=60, will=None, auth=None, tls=None,
+    #        protocol=mqtt.MQTTv311, transport="tcp")
 
 
 #     mqtt.publish(MQTT_TOPIC, 'tick')
