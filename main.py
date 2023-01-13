@@ -19,18 +19,18 @@ SUBSCRIBE_TOPIC = f"$share/{MQTT_GROUP}/{MQTT_TOPIC}"
 logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
 logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 
-# # MQTT config
-# mqtt_config = MQTTConfig(
-#     host=MQTT_HOST,
-#     port=MQTT_PORT
-# )
+# MQTT config
+mqtt_config = MQTTConfig(
+    host=MQTT_HOST,
+    port=MQTT_PORT
+)
 
-# mqtt = FastMQTT(
-#     config=mqtt_config
-# )
+mqtt = FastMQTT(
+    config=mqtt_config
+)
 
 app = FastAPI()
-# mqtt.init_app(app)
+mqtt.init_app(app)
 
 
 def tick():
