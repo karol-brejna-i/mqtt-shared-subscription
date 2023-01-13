@@ -14,6 +14,12 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 logger.info(f"MQTT_HOST: {MQTT_HOST}")
 logger.info(f"MQTT_PORT: {MQTT_PORT}")
 
+MQTT_GROUP = os.getenv("MQTT_GROUP", "group1")
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "test")
+SUBSCRIBE_TOPIC = f"$share/{MQTT_GROUP}/{MQTT_TOPIC}"
+logger.info(f"MQTT_GROUP: {MQTT_GROUP}, MQTT_TOPIC: {MQTT_TOPIC}")
+logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
+
 # MQTT config
 mqtt_config = MQTTConfig(
     host=MQTT_HOST,
@@ -30,8 +36,8 @@ mqtt.init_app(app)
 
 @mqtt.on_connect()
 def connect(client, flags, rc, properties):
-    mqtt.client.subscribe("$share/group1/test")  # subscribing mqtt topic
-    logger.info("Connected: ", client, flags, rc, properties)
+    mqtt.client.subscribe(SUBSCRIBE_TOPIC)  # subscribing mqtt topic
+    logger.info(f"Connected: {client}, {flags}, {rc}, {properties}")
 
 
 @mqtt.on_message()
@@ -51,7 +57,7 @@ def disconnect(client, packet, exc=None):
 
 @mqtt.on_subscribe()
 def subscribe(client, mid, qos, properties):
-    logger.info("subscribed", client, mid, qos, properties)
+    logger.info(f"subscribed {client}, {mid}, {qos}, {properties}")
 
 
 @app.get("/")
@@ -62,7 +68,7 @@ async def root():
 @app.get("/publish")
 async def func(message: str = "Test message."):
     logger.info(f"Publishing message ({os.getpid()}): {message}")
-    mqtt.publish("test", message)  # publishing mqtt topic
+    mqtt.publish(MQTT_TOPIC, message)
 
     return {"result": True, "message": "Published"}
 
