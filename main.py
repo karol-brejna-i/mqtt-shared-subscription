@@ -39,14 +39,16 @@ def tick():
 
 
 @app.on_event('startup')
-def init_data():
+async def init_data():
     logger.info("Starting the scheduler")
     scheduler = BackgroundScheduler()
     scheduler.add_job(tick, 'interval', seconds=10)
     scheduler.start()
 
+
 @mqtt.on_connect()
 def connect(client, flags, rc, properties):
+    logger.info("Connected to MQTT Broker!")
     mqtt.client.subscribe(SUBSCRIBE_TOPIC)  # subscribing mqtt topic
     logger.info(f"Connected: {client}, {flags}, {rc}, {properties}")
 
