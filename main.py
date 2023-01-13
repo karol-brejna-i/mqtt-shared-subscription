@@ -29,8 +29,8 @@ app = FastAPI()
 
 def tick():
     logger.info("tick")
-
-
+    # mqtt_client
+    mqtt_client.publish(MQTT_TOPIC, "tick")
 #     mqtt.publish(MQTT_TOPIC, 'tick')
 
 
