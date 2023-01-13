@@ -33,14 +33,16 @@ def on_disconnect(client, userdata, flags, rc=0):
 
 
 def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.payload))
+    logger.info(msg.topic + " " + str(msg.payload))
 
 
 mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
+logger.info(f"mqtt_client {mqtt_client}")
 mqtt_client.on_disconnect = on_disconnect
 mqtt_client.on_connect = on_connect
 mqtt_client._on_message = on_message
-mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
+connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
+logger.info(f"connect_result: {connect_result}")
 # mqtt_client.connect_async()
 
 logger.info("before loop start")
@@ -50,7 +52,7 @@ app = FastAPI()
 
 
 def tick():
-    logger.info("tick")
+    logger.info("tick+publish")
     # mqtt_client
     result = mqtt_client.publish(MQTT_TOPIC, "tick", qos=1)
     logger.info(f"publish result: {result}")
