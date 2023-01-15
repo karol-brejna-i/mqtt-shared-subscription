@@ -26,6 +26,7 @@ logger.info(f"SUBSCRIBE_TOPIC: {SUBSCRIBE_TOPIC}")
 def on_connect(client, userdata, flags, rc, costam):
     logger.info("on_connect")
     logger.info(f"Connected with {client}, {userdata}, {flags}, {rc}, {costam}")
+    mqtt_client.subscribe(MQTT_TOPIC)
     # mqtt_client.subscribe(SUBSCRIBE_TOPIC)
 
 
@@ -49,14 +50,13 @@ mqtt_client.on_message = on_message
 sub_result = mqtt_client.subscribe(MQTT_TOPIC, options=SubscribeOptions(qos=1))
 logger.info("sub_result: " + str(sub_result))
 
-
 connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
 logger.info(f"connect_result: {connect_result} - type: {type(connect_result)}")
 logger.debug("MQTT_ERR_SUCCESS = 0")
 # mqtt_client.connect_async()
 
 logger.info("before loop start")
-mqtt_client.loop_start() # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php#network-loop
+mqtt_client.loop_start()  # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php#network-loop
 logger.info("after loop start")
 
 app = FastAPI()
@@ -82,6 +82,7 @@ async def init_data():
     scheduler = BackgroundScheduler()
     scheduler.add_job(tick, 'interval', seconds=10)
     scheduler.start()
+
 
 @app.get("/")
 async def root():
