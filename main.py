@@ -49,14 +49,15 @@ mqtt_client.on_message = on_message
 sub_result = mqtt_client.subscribe(MQTT_TOPIC, options=SubscribeOptions(qos=1))
 logger.info("sub_result: " + str(sub_result))
 
-logger.info("before loop start")
-mqtt_client.loop_start()
-logger.info("after loop start")
 
 connect_result = mqtt_client.connect(MQTT_HOST, port=MQTT_PORT, keepalive=60)
 logger.info(f"connect_result: {connect_result} - type: {type(connect_result)}")
 logger.debug("MQTT_ERR_SUCCESS = 0")
 # mqtt_client.connect_async()
+
+logger.info("before loop start")
+mqtt_client.loop_start() # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php#network-loop
+logger.info("after loop start")
 
 app = FastAPI()
 
