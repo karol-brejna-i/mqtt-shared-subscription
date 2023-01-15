@@ -30,7 +30,7 @@ def on_connect(client, userdata, flags, rc, costam):
 
 
 def on_disconnect(client, userdata, flags, rc):
-    logger.debug("DisConnected result code {client}, {userdata}, {flags}, {rc}")
+    logger.debug(f"DisConnected result code {client}, {userdata}, {flags}, {rc}")
     mqtt_client.loop_stop()
     mqtt_client.loop_start()
 
